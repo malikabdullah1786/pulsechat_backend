@@ -20,6 +20,19 @@ public class SupabaseService {
                         @Value("${supabase.url}") String supabaseUrl,
                         @Value("${supabase.service-key}") String serviceKey) {
                 this.serviceKey = serviceKey;
+
+                if (supabaseUrl == null || supabaseUrl.isEmpty() || serviceKey == null || serviceKey.isEmpty()) {
+                        System.err.println("************************************************************");
+                        System.err.println("WARNING: SUPABASE_URL or SUPABASE_SERVICE_KEY is missing!");
+                        System.err.println("The application will NOT be able to communicate with Supabase.");
+                        System.err.println("Please set these environment variables in your Render Dashboard.");
+                        System.err.println("************************************************************");
+
+                        // Use a dummy URL if empty to allow the bean to be created without crash
+                        supabaseUrl = (supabaseUrl == null || supabaseUrl.isEmpty()) ? "http://missing-supabase-url"
+                                        : supabaseUrl;
+                }
+
                 this.client = WebClient.builder()
                                 .baseUrl(supabaseUrl + "/rest/v1")
                                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
